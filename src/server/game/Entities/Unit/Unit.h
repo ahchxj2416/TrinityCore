@@ -212,6 +212,9 @@ class UnitAI;
 class UnitAura;
 class Vehicle;
 class VehicleJoinEvent;
+
+enum class PetActionFeedback : uint8;
+
 namespace Movement
 {
     class MoveSpline;
@@ -449,8 +452,8 @@ enum CombatRating
     CR_CRIT_MELEE                       = 8,
     CR_CRIT_RANGED                      = 9,
     CR_CRIT_SPELL                       = 10,
-    CR_MULTISTRIKE                      = 11,
-    CR_READINESS                        = 12,
+    CR_CORRUPTION                       = 11,
+    CR_CORRUPTION_RESISTANCE            = 12,
     CR_SPEED                            = 13,
     CR_RESILIENCE_CRIT_TAKEN            = 14,
     CR_RESILIENCE_PLAYER_DAMAGE         = 15,
@@ -685,12 +688,12 @@ struct CalcDamageInfo
 // Spell damage info structure based on structure sending in SMSG_SPELLNONMELEEDAMAGELOG opcode
 struct TC_GAME_API SpellNonMeleeDamage
 {
-    SpellNonMeleeDamage(Unit* _attacker, Unit* _target, uint32 _SpellID, uint32 _SpellXSpellVisualID, uint32 _schoolMask, ObjectGuid _castId = ObjectGuid::Empty);
+    SpellNonMeleeDamage(Unit* _attacker, Unit* _target, SpellInfo const* _spellInfo, uint32 _SpellXSpellVisualID, uint32 _schoolMask, ObjectGuid _castId = ObjectGuid::Empty);
 
     Unit   *target;
     Unit   *attacker;
     ObjectGuid castId;
-    uint32 SpellID;
+    SpellInfo const* Spell;
     uint32 SpellXSpellVisualID;
     uint32 damage;
     uint32 originalDamage;
@@ -1909,8 +1912,8 @@ class TC_GAME_API Unit : public WorldObject
         void SetControlled(bool apply, UnitState state);
 
         ///----------Pet responses methods-----------------
-        void SendPetActionFeedback (uint8 msg);
-        void SendPetTalk (uint32 pettalk);
+        void SendPetActionFeedback(PetActionFeedback msg, uint32 spellId);
+        void SendPetTalk(uint32 pettalk);
         void SendPetAIReaction(ObjectGuid guid);
         ///----------End of Pet responses methods----------
 
